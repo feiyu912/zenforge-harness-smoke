@@ -1,0 +1,14 @@
+# Build artifacts
+zenforge-harness-smoke
+/zenforge-harness-smoke
+
+# Local env (secrets)
+.env
+.env.local
+.env.*.local
+
+# OS / editor
+.DS_Store
+.idea/
+.vscode/
+*.swp
