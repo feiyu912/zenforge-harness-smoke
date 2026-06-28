@@ -50,15 +50,8 @@ func main() {
 	_ = loadDotEnv(".env")
 	opts := parseFlags()
 	ctx := context.Background()
-	// `go run .` starts the test server by default — it's the surface the
-	// minimal UI in ../zenforge-testui talks to. Pass -q "..." to run a
-	// single CLI query instead.
-	if !opts.HTTP && opts.Question == "" && len(flag.Args()) == 0 {
-		opts.HTTP = true
-	}
 	if opts.HTTP {
-		// Default the server to the offline scripted model unless the user
-		// passed --model explicitly. This keeps `go run .` self-contained.
+		// Keep the test server self-contained unless the user selected a model.
 		if !modelFlagSet {
 			opts.Model = "scripted"
 		}
@@ -271,8 +264,9 @@ func modelFor(opts appOptions) (model.Model, error) {
 		}
 		baseURL := opts.BaseURL
 		if strings.TrimSpace(baseURL) == "" {
-			baseURL = "https://api.minimaxi.com/anthropic/v1"
+			baseURL = "https://api.minimaxi.com/anthropic"
 		}
+		baseURL = anthropicBaseURL(baseURL)
 		return anthropic.New(anthropic.Config{
 			APIKey:  apiKey,
 			Model:   "MiniMax-M3",
@@ -297,12 +291,20 @@ func modelFor(opts appOptions) (model.Model, error) {
 	}
 }
 
+func anthropicBaseURL(baseURL string) string {
+	baseURL = strings.TrimRight(strings.TrimSpace(baseURL), "/")
+	if baseURL == "https://api.minimaxi.com/anthropic" {
+		return baseURL + "/v1"
+	}
+	return baseURL
+}
+
 func providerAuthHint(message string) string {
 	lower := strings.ToLower(message)
 	if !strings.Contains(lower, "401") && !strings.Contains(lower, "unauthorized") && !strings.Contains(lower, "invalid api key") {
 		return ""
 	}
-	return "MiniMax rejected the API key. Check ANTHROPIC_API_KEY in .env or your shell environment. The DeepAgents-style MiniMax path uses ANTHROPIC_BASE_URL=https://api.minimaxi.com/anthropic/v1."
+	return "MiniMax rejected the API key. Check ANTHROPIC_API_KEY in .env or your shell environment. The DeepAgents-style MiniMax path uses ANTHROPIC_BASE_URL=https://api.minimaxi.com/anthropic."
 }
 
 func approvalBroker(opts appOptions) (approval.Broker, error) {

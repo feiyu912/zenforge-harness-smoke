@@ -23,11 +23,13 @@ For MiniMax, put the key in the environment:
 
 ```bash
 export ANTHROPIC_API_KEY=...
-export ANTHROPIC_BASE_URL=https://api.minimaxi.com/anthropic/v1
+export ANTHROPIC_BASE_URL=https://api.minimaxi.com/anthropic
 go run .
 ```
 
 Then type your question at the `You:` prompt.
+
+Use `go run . --http` only when running the separate browser test UI.
 
 Or copy `.env.example` to `.env`, fill `ANTHROPIC_API_KEY`, then run:
 
@@ -59,7 +61,7 @@ that adapter outside the harness.
 
 ```bash
 export ANTHROPIC_API_KEY=...
-export ANTHROPIC_BASE_URL=https://api.minimaxi.com/anthropic/v1
+export ANTHROPIC_BASE_URL=https://api.minimaxi.com/anthropic
 go run .
 ```
 
